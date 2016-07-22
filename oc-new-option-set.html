@@ -1,0 +1,34 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`oc-new-option-set`
+Element to create and add options to a new option set
+
+@demo demo/index.html 
+-->
+
+<dom-module id="oc-new-option-set">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'oc-new-option-set',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'oc-new-option-set',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
