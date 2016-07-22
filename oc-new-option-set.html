@@ -19,7 +19,7 @@ Element for editing all aspects of an option set
 @demo demo/index.html
 -->
 
-<dom-module id="oc-optionset-edit">
+<dom-module id="oc-new-option-set">
   <style>
     :host {
       display: block;
@@ -59,21 +59,16 @@ Element for editing all aspects of an option set
 
   <script>
     Polymer({
-      is: 'oc-optionset-edit',
+      is: 'oc-new-option-set',
 
       properties: {
         organisationId: Number,
-        optionSetId: Number,
         loading: {
           type: Boolean,
           value: false,
           notify: true
         }
       },
-
-      observers: [
-        'refresh(optionSetId)'
-      ],
 
       ready: function() {
         this._showOptionsList = false;
