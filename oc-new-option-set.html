@@ -1,34 +1,127 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<!--
-`oc-new-option-set`
-Element to create and add options to a new option set
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
 
-@demo demo/index.html 
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../oc-option-set-input/oc-option-set-input.html">
+<link rel="import" href="../oc-option-input/oc-option-input.html">
+
+<link rel="import" href="../oc-product-option-api/oc-product-option-api.html">
+
+
+<!--
+`oc-optionset-edit`
+Element for editing all aspects of an option set
+
+@demo demo/index.html
 -->
 
-<dom-module id="oc-new-option-set">
+<dom-module id="oc-optionset-edit">
+  <style>
+    :host {
+      display: block;
+    }
+    paper-material {
+      background-color: #fff;
+      padding: 10px;
+    }
+    .options-material {
+      margin: 10px 0px 0px 0px;
+    }
+    .new-option-button {
+      margin: 10px;
+    }
+  </style>
+
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]</h2>
+    <paper-material>
+      <oc-option-set-input id="optionSetInput" on-action="_onCreateOptionSet"></oc-option-set-input>
+    </paper-material>
+    <paper-material class="options-material">
+      <iron-collapse opened="[[ _showOptionsList ]]">
+        <iron-collapse opened$="[[ _showNewOptionInput ]]">
+          <oc-option-input id="optionInput" on-create="_onCreateOption"></oc-option-input>
+        </iron-collapse>
+        <iron-collapse opened$="[[ !_showNewOptionInput ]]">
+          <paper-button class="new-option-button" on-tap="_onNewOptionTapped">New Option</paper-button>
+          <template is="dom-repeat" items="[[ _options ]]">
+            <div><span>{{item.name}}</span></div>
+          </template>
+        </iron-collapse>
+      </iron-collapse>
+    </paper-material>
+
+    <oc-product-option-api id="optionsApi"></oc-product-option-api>
   </template>
 
   <script>
     Polymer({
-
-      is: 'oc-new-option-set',
+      is: 'oc-optionset-edit',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'oc-new-option-set',
-        },
+        organisationId: Number,
+        optionSetId: Number,
+        loading: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
       },
 
+      observers: [
+        'refresh(optionSetId)'
+      ],
+
+      ready: function() {
+        this._showOptionsList = false;
+        this._showNewOptionInput = false;
+        this.loading = false;
+        this._options = [];
+      },
+
+      _onCreateOptionSet: function(event) {
+        this.loading = true;
+        this.$.optionsApi.createOptionSet(event.detail)
+                .then(function(response) {
+                  var resp = response.xhr.getAllResponseHeaders();
+                  this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
+                  this._showOptionsList = true;
+                }.bind(this))
+                .catch(this.fire.bind(this, 'error', 'Could not create option set'))
+                .finally(this.set.bind(this, 'loading', false));
+      },
+
+      _onNewOptionTapped: function(event) {
+        this._showNewOptionInput = true;
+      },
+
+      _onCreateOption: function(event) {
+        this.loading = true;
+        this.$.optionsApi.createOption(this.organisationId,
+                {
+                  name: event.detail.name,
+                  price: event.detail.price,
+                  description: event.detail.description,
+                  setId: this._optionSetId,
+                  itemsPluFlatMappingEnabled: false})
+                .then(function() {this._refreshOptions()}.bind(this))
+                .catch(this.fire.bind(this, 'error', 'Could not update option set'))
+      },
+
+      _refreshOptions: function() {
+        this.loading = true;
+        this.$.optionsApi.getOptions(this.organisationId)
+                .then(function(response) {
+                  this._options = response.response.results;
+                }.bind(this))
+                .catch(this.fire.bind(this, 'error', 'Could not update option set'))
+                .finally(function () {
+                  this.loading = false;
+                }.bind(this));
+      }
     });
   </script>
 </dom-module>
