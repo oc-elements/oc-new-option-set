@@ -124,7 +124,12 @@ Element for editing all aspects of an option set
       },
 
       _onDeleteOption: function(event) {
-        this.fire('deleteOption', event);
+        this.loading = true;
+        this.$.optionsApi.deleteOption(event.detail.id)
+                .then(function () {
+                  this._refreshOptions();
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not delete option'))
       },
 
       _onCancelNewOption: function(event) {
