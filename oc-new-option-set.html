@@ -38,7 +38,7 @@ Element for editing all aspects of an option set
 
   <template>
     <paper-material>
-      <oc-option-set-input id="optionSetInput" on-action="_onCreateOptionSet"></oc-option-set-input>
+      <oc-option-set-input id="optionSetInput" on-action="_onCreateOptionSet" action-name="Create Option Set"></oc-option-set-input>
     </paper-material>
     <paper-material class="options-material">
       <iron-collapse opened="[[ _showOptionsList ]]">
@@ -83,13 +83,15 @@ Element for editing all aspects of an option set
                 .then(function(response) {
                   var resp = response.xhr.getAllResponseHeaders();
                   this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
+                  this._options = [];
                   this._showOptionsList = true;
                 }.bind(this))
-                .catch(this.fire.bind(this, 'error', 'Could not create option set'))
+                .catch(this.fire.bind(this, 'options_error', 'Could not create option set'))
                 .finally(this.set.bind(this, 'loading', false));
       },
 
       _onNewOptionTapped: function(event) {
+        this.$.optionInput.clear();
         this._showNewOptionInput = true;
       },
 
@@ -103,17 +105,18 @@ Element for editing all aspects of an option set
                   setId: this._optionSetId,
                   itemsPluFlatMappingEnabled: false})
                 .then(function() {this._refreshOptions()}.bind(this))
-                .catch(this.fire.bind(this, 'error', 'Could not update option set'))
+                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
       },
 
       _refreshOptions: function() {
         this.loading = true;
-        this.$.optionsApi.getOptions(this.organisationId)
+        this.$.optionsApi.getOptionSet(this._optionSetId)
                 .then(function(response) {
-                  this._options = response.response.results;
+                  this._options = response.response.options;
                 }.bind(this))
-                .catch(this.fire.bind(this, 'error', 'Could not update option set'))
+                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
                 .finally(function () {
+                  this._showNewOptionInput = false;
                   this.loading = false;
                 }.bind(this));
       }
