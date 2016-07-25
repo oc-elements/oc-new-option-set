@@ -8,7 +8,7 @@
 
 <link rel="import" href="../oc-option-set-input/oc-option-set-input.html">
 <link rel="import" href="../oc-option-input/oc-option-input.html">
-
+<link rel="import" href="../oc-options-list/oc-options-list.html">
 <link rel="import" href="../oc-product-option-api/oc-product-option-api.html">
 
 
@@ -47,9 +47,7 @@ Element for editing all aspects of an option set
         </iron-collapse>
         <iron-collapse opened$="[[ !_showNewOptionInput ]]">
           <paper-button class="new-option-button" on-tap="_onNewOptionTapped">New Option</paper-button>
-          <template is="dom-repeat" items="[[ _options ]]">
-            <div><span>{{item.name}}</span></div>
-          </template>
+          <oc-options-list options="[[ _options ]]" on-edit="_onEditOption" on-delete="_onDeleteOption"></oc-options-list>
         </iron-collapse>
       </iron-collapse>
     </paper-material>
@@ -119,6 +117,14 @@ Element for editing all aspects of an option set
                   this._showNewOptionInput = false;
                   this.loading = false;
                 }.bind(this));
+      },
+
+      _onEditOption: function(event) {
+        this.fire('editOption', event);
+      },
+
+      _onDeleteOption: function(event) {
+        this.fire('deleteOption', event);
       }
     });
   </script>

@@ -10,6 +10,7 @@
     "iron-collapse": "PolymerElements/iron-collapse#^1.2.0",
     "oc-option-set-input": "git://github.com/oc-elements/oc-option-set-input#1.x",
     "oc-option-input": "git://github.com/oc-elements/oc-option-input#1.x",
+    "oc-options-list": "git://github.com/oc-elements/oc-options-list#1.x",
     "oc-product-option-api": "git://github.com/oc-elements/oc-product-option-api#1.x"
   },
   "devDependencies": {
