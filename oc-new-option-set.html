@@ -43,7 +43,7 @@ Element for editing all aspects of an option set
     <paper-material class="options-material">
       <iron-collapse opened="[[ _showOptionsList ]]">
         <iron-collapse opened$="[[ _showNewOptionInput ]]">
-          <oc-option-input id="optionInput" on-create="_onCreateOption"></oc-option-input>
+          <oc-option-input id="optionInput" on-create="_onCreateOption" on-cancel="_onCancelNewOption"></oc-option-input>
         </iron-collapse>
         <iron-collapse opened$="[[ !_showNewOptionInput ]]">
           <paper-button class="new-option-button" on-tap="_onNewOptionTapped">New Option</paper-button>
@@ -125,6 +125,11 @@ Element for editing all aspects of an option set
 
       _onDeleteOption: function(event) {
         this.fire('deleteOption', event);
+      },
+
+      _onCancelNewOption: function(event) {
+        this.$.optionInput.clear();
+        this._showNewOptionInput = false;
       }
     });
   </script>
