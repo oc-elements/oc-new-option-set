@@ -9,7 +9,9 @@
 <link rel="import" href="../oc-option-set-input/oc-option-set-input.html">
 <link rel="import" href="../oc-option-input/oc-option-input.html">
 <link rel="import" href="../oc-options-list/oc-options-list.html">
-<link rel="import" href="../oc-product-option-api/oc-product-option-api.html">
+
+<!--TODO: Refactor-->
+<!--<link rel="import" href="../oc-product-option-api/oc-product-option-api.html">-->
 
 
 <!--
@@ -43,7 +45,7 @@ Element for editing all aspects of an option set
     <paper-material class="options-material">
       <iron-collapse opened="[[ _showOptionsList ]]">
         <iron-collapse opened$="[[ _showNewOptionInput ]]">
-          <oc-option-input id="optionInput" on-create="_onCreateOption" on-cancel="_onCancelNewOption"></oc-option-input>
+          <oc-option-input id="optionInput" on-create="_onCreateOption" on-cancel="_onCancelNewOption" plu-flatmapping></oc-option-input>
         </iron-collapse>
         <iron-collapse opened$="[[ !_showNewOptionInput ]]">
           <paper-button class="new-option-button" on-tap="_onNewOptionTapped">New Option</paper-button>
@@ -52,7 +54,8 @@ Element for editing all aspects of an option set
       </iron-collapse>
     </paper-material>
 
-    <oc-product-option-api id="optionsApi"></oc-product-option-api>
+    <!--TODO: Refactor-->
+    <!--<oc-product-option-api id="optionsApi"></oc-product-option-api>-->
   </template>
 
   <script>
@@ -61,31 +64,46 @@ Element for editing all aspects of an option set
 
       properties: {
         organisationId: Number,
+        optionsSet: {
+          type: Object,
+          observer: "_setOptionParams",
+        },
         loading: {
           type: Boolean,
-          value: false,
           notify: true
-        }
+        },
+        pluFlatmapping : Boolean
       },
 
       ready: function() {
         this._showOptionsList = false;
         this._showNewOptionInput = false;
         this.loading = false;
+        this._optionSetId = null;
         this._options = [];
       },
 
+      _setOptionParams : function(data){
+        this._showOptionsList = data.showOptionsList;
+        this._showNewOptionInput = data.showNewOptionInput;
+        this._options = data.options;
+        this._optionSetId = data.optionSetId;
+        console.log("called", data);
+      },
+
       _onCreateOptionSet: function(event) {
-        this.loading = true;
-        this.$.optionsApi.createOptionSet(event.detail)
-                .then(function(response) {
-                  var resp = response.xhr.getAllResponseHeaders();
-                  this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
-                  this._options = [];
-                  this._showOptionsList = true;
-                }.bind(this))
-                .catch(this.fire.bind(this, 'options_error', 'Could not create option set'))
-                .finally(this.set.bind(this, 'loading', false));
+        this.fire("option-set-create", event.detail);
+        <!--TODO: Refactor-->
+//        this.loading = true;
+//        this.$.optionsApi.createOptionSet(event.detail)
+//                .then(function(response) {
+//                  var resp = response.xhr.getAllResponseHeaders();
+//                  this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
+//                  this._options = [];
+//                  this._showOptionsList = true;
+//                }.bind(this))
+//                .catch(this.fire.bind(this, 'options_error', 'Could not create option set'))
+//                .finally(this.set.bind(this, 'loading', false));
       },
 
       _onNewOptionTapped: function(event) {
@@ -94,29 +112,37 @@ Element for editing all aspects of an option set
       },
 
       _onCreateOption: function(event) {
-        this.loading = true;
-        this.$.optionsApi.createOption(this.organisationId,
-                {
-                  name: event.detail.name,
-                  price: event.detail.price,
-                  description: event.detail.description,
-                  setId: this._optionSetId,
-                  itemsPluFlatMappingEnabled: false})
-                .then(function() {this._refreshOptions()}.bind(this))
-                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
+        var params = event.detail;
+        params.setId = this._optionSetId;
+
+        this.fire("option-create", params);
+
+        <!--TODO: Refactor-->
+//        this.loading = true;
+//        this.$.optionsApi.createOption(this.organisationId,
+//                {
+//                  name: event.detail.name,
+//                  price: event.detail.price,
+//                  description: event.detail.description,
+//                  setId: this._optionSetId,
+//                  itemsPluFlatMappingEnabled: false})
+//                .then(function() {this._refreshOptions()}.bind(this))
+//                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
       },
 
       _refreshOptions: function() {
-        this.loading = true;
-        this.$.optionsApi.getOptionSet(this._optionSetId)
-                .then(function(response) {
-                  this._options = response.response.options;
-                }.bind(this))
-                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
-                .finally(function () {
-                  this._showNewOptionInput = false;
-                  this.loading = false;
-                }.bind(this));
+        this.fire("option-set-refresh", event.detail);
+        <!--TODO: Refactor-->
+//        this.loading = true;
+//        this.$.optionsApi.getOptionSet(this._optionSetId)
+//                .then(function(response) {
+//                  this._options = response.response.options;
+//                }.bind(this))
+//                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
+//                .finally(function () {
+//                  this._showNewOptionInput = false;
+//                  this.loading = false;
+//                }.bind(this));
       },
 
       _onEditOption: function(event) {
@@ -124,12 +150,14 @@ Element for editing all aspects of an option set
       },
 
       _onDeleteOption: function(event) {
-        this.loading = true;
-        this.$.optionsApi.deleteOption(event.detail.id)
-                .then(function () {
-                  this._refreshOptions();
-                }.bind(this))
-                .catch(this.fire.bind(this, 'options_error', 'Could not delete option'))
+        this.fire("option-set-delete", event.detail);
+        <!--TODO: Refactor-->
+//        this.loading = true;
+//        this.$.optionsApi.deleteOption(event.detail.id)
+//                .then(function () {
+//                  this._refreshOptions();
+//                }.bind(this))
+//                .catch(this.fire.bind(this, 'options_error', 'Could not delete option'))
       },
 
       _onCancelNewOption: function(event) {
