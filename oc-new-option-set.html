@@ -76,6 +76,14 @@ Element for editing all aspects of an option set
         this._options = [];
       },
 
+      showOptionsList: function(show) {
+        this._showOptionsList = show;
+      },
+
+      showNewOptionInput: function(show) {
+        this._showNewOptionInput = show;
+      },
+
       _setOptionParams : function(data){
         this._showOptionsList = data.showOptionsList;
         this._showNewOptionInput = data.showNewOptionInput;
