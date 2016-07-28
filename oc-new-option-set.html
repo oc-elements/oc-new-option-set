@@ -57,10 +57,6 @@ Element for editing all aspects of an option set
 
       properties: {
         organisationId: Number,
-        optionsSet: {
-          type: Object,
-          observer: "_setOptionParams",
-        },
         loading: {
           type: Boolean,
           notify: true
@@ -72,7 +68,6 @@ Element for editing all aspects of an option set
         this._showOptionsList = false;
         this._showNewOptionInput = false;
         this.loading = false;
-        this._optionSetId = null;
         this._options = [];
       },
 
@@ -84,12 +79,8 @@ Element for editing all aspects of an option set
         this._showNewOptionInput = show;
       },
 
-      _setOptionParams : function(data){
-        this._showOptionsList = data.showOptionsList;
-        this._showNewOptionInput = data.showNewOptionInput;
-        this._options = data.options;
-        this._optionSetId = data.optionSetId;
-        console.log("called", data);
+      setOptions : function(options) {
+        this._options = options;
       },
 
       _onCreateOptionSet: function(event) {
@@ -102,14 +93,7 @@ Element for editing all aspects of an option set
       },
 
       _onCreateOption: function(event) {
-        var params = event.detail;
-        params.setId = this._optionSetId;
-
-        this.fire("option-create", params);
-      },
-
-      _refreshOptions: function() {
-        this.fire("option-set-refresh", event.detail);
+        this.fire("option-create", event.detail);
       },
 
       _onEditOption: function(event) {
