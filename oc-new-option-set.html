@@ -10,10 +10,6 @@
 <link rel="import" href="../oc-option-input/oc-option-input.html">
 <link rel="import" href="../oc-options-list/oc-options-list.html">
 
-<!--TODO: Refactor-->
-<!--<link rel="import" href="../oc-product-option-api/oc-product-option-api.html">-->
-
-
 <!--
 `oc-optionset-edit`
 Element for editing all aspects of an option set
@@ -53,9 +49,6 @@ Element for editing all aspects of an option set
         </iron-collapse>
       </iron-collapse>
     </paper-material>
-
-    <!--TODO: Refactor-->
-    <!--<oc-product-option-api id="optionsApi"></oc-product-option-api>-->
   </template>
 
   <script>
@@ -93,17 +86,6 @@ Element for editing all aspects of an option set
 
       _onCreateOptionSet: function(event) {
         this.fire("option-set-create", event.detail);
-        <!--TODO: Refactor-->
-//        this.loading = true;
-//        this.$.optionsApi.createOptionSet(event.detail)
-//                .then(function(response) {
-//                  var resp = response.xhr.getAllResponseHeaders();
-//                  this._optionSetId = resp.substring(resp.lastIndexOf("/")+1).trim();
-//                  this._options = [];
-//                  this._showOptionsList = true;
-//                }.bind(this))
-//                .catch(this.fire.bind(this, 'options_error', 'Could not create option set'))
-//                .finally(this.set.bind(this, 'loading', false));
       },
 
       _onNewOptionTapped: function(event) {
@@ -116,33 +98,10 @@ Element for editing all aspects of an option set
         params.setId = this._optionSetId;
 
         this.fire("option-create", params);
-
-        <!--TODO: Refactor-->
-//        this.loading = true;
-//        this.$.optionsApi.createOption(this.organisationId,
-//                {
-//                  name: event.detail.name,
-//                  price: event.detail.price,
-//                  description: event.detail.description,
-//                  setId: this._optionSetId,
-//                  itemsPluFlatMappingEnabled: false})
-//                .then(function() {this._refreshOptions()}.bind(this))
-//                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
       },
 
       _refreshOptions: function() {
         this.fire("option-set-refresh", event.detail);
-        <!--TODO: Refactor-->
-//        this.loading = true;
-//        this.$.optionsApi.getOptionSet(this._optionSetId)
-//                .then(function(response) {
-//                  this._options = response.response.options;
-//                }.bind(this))
-//                .catch(this.fire.bind(this, 'options_error', 'Could not update option set'))
-//                .finally(function () {
-//                  this._showNewOptionInput = false;
-//                  this.loading = false;
-//                }.bind(this));
       },
 
       _onEditOption: function(event) {
@@ -151,13 +110,6 @@ Element for editing all aspects of an option set
 
       _onDeleteOption: function(event) {
         this.fire("option-set-delete", event.detail);
-        <!--TODO: Refactor-->
-//        this.loading = true;
-//        this.$.optionsApi.deleteOption(event.detail.id)
-//                .then(function () {
-//                  this._refreshOptions();
-//                }.bind(this))
-//                .catch(this.fire.bind(this, 'options_error', 'Could not delete option'))
       },
 
       _onCancelNewOption: function(event) {
